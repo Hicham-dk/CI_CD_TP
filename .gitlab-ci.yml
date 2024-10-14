@@ -8,15 +8,13 @@ retrieve-job:
   stage: retrieve
   script:
     - ant retrieve
-  needs:
-    - clean-job
+
 
 compile-job:
   stage: compile
   script:
     - ant compile
-  needs:
-    - retrieve-job
+ 
 
 dist-job:
   stage: dist
