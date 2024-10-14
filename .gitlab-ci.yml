@@ -8,5 +8,5 @@ build-job:
     - ant all
   artifacts:
     paths:
-      - /home/dosi/Downloads/TetrisAnt/dist/Tetris.jar
+      - /home/dosi/Downloads/TetrisAnt/dist/
     expire_in: 1 week
