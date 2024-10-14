@@ -2,12 +2,12 @@ stages:
   - build
   - test
 
-build_job:
+build-job:
   stage: build
   script:
-    - echo "Building the project..."
+    - ant clean compile
 
-test_job:
+test-job:
   stage: test
   script:
-    - echo "Running tests..."
+    - ant test
