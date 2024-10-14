@@ -79,11 +79,4 @@ test-job:
   stage: test
   script:
     - ant test
-  artifacts:
-    when: always
-    paths:
-      - bin/test-results/
-    reports:
-      junit: bin/test-results/TEST-*.xml
-    expire_in: 1 week
-  allow_failure: false
+ 
