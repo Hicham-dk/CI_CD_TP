@@ -6,6 +6,7 @@ stages:
   - compile-test
   - javadoc
   - dist
+  - test
 
 # Job pour nettoyer le projet avant la compilation
 clean-job:
