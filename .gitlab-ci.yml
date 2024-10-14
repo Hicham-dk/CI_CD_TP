@@ -67,7 +67,6 @@ dist-job:
   script:
     - ant dist
   needs:
-    - test-reports-job
     - javadoc-job
   artifacts:
     paths:
