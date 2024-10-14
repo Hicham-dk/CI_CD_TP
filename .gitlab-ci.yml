@@ -1,25 +1,16 @@
-# Définition des stages pour le pipeline
 stages:
-  - compile
-  - test
+  - dist
   - test-reports
   - javadoc
 
-# Job pour la compilation du projet
-compile-job:
-  stage: compile
+dist-job:
+  stage: dist
   script:
     - ant dist
   artifacts:
     paths:
       - /home/dosi/builds/8sy1vFyDz/0/dosi/pic/dakhouch_hicham/tp_ci_cd/dist/Tetris.jar
     expire_in: 1 week
-
-# Job pour exécuter les tests unitaires et générer un rapport JUnit
-test-job:
-  stage: test
-  script:
-    - ant test
 
 
 # Job pour générer les rapports de tests à partir des résultats JUnit
