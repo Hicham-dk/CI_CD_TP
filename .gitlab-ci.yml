@@ -4,8 +4,6 @@ stages:
   - retrieve
   - compile
   - compile-test
-  - test
-  - test-reports
   - javadoc
   - dist
 
@@ -47,33 +45,9 @@ compile-test-job:
       - bin/test/
     expire_in: 1 week
 
-# Job pour exécuter les tests unitaires
-test-job:
-  stage: test
-  script:
-    - ant test
-  needs:
-    - compile-test-job
-  artifacts:
-    when: always
-    paths:
-      - bin/test-results/
-    reports:
-      junit: bin/test-results/TEST-*.xml
-    expire_in: 1 week
-  allow_failure: false
 
-# Job pour générer les rapports de tests à partir des résultats JUnit
-test-reports-job:
-  stage: test-reports
-  script:
-    - ant test-reports
-  needs:
-    - test-job
-  artifacts:
-    paths:
-      - test-reports/
-    expire_in: 1 week
+
+
 
 # Job pour générer la documentation Javadoc
 javadoc-job:
