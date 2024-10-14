@@ -2,7 +2,7 @@
 stages:
   - compile
   - test
-  - reports
+  - test-reports
   - javadoc
 
 # Job pour la compilation du projet
@@ -30,8 +30,8 @@ test-job:
   allow_failure: false # Le pipeline échoue si les tests échouent
 
 # Job pour générer les rapports de tests à partir des résultats JUnit
-reports-job:
-  stage: reports
+test-reports-job:
+  stage: test-reports
   script:
     - ant test-reports
   artifacts:
@@ -49,8 +49,3 @@ javadoc-job:
       - javadoc
     expire_in: 1 week
 
-# Job pour nettoyer le répertoire après chaque exécution de pipeline
-cleanup-job:
-  stage: cleanup
-  script:
-    - ant clean
