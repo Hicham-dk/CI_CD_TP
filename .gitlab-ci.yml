@@ -1,15 +1,12 @@
 stages:
   - build
-  - test
+
 
 build-job:
   stage: build
   script:
-    - ant dist
-
-test-job:
-  stage: test
-  script:
-    - ant test-reports
-    - ant javadoc
-
+    - ant all
+  artifacts:
+    paths:
+      - output/
+    expire_in: 1 week
