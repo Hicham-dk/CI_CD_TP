@@ -1,12 +1,31 @@
 stages:
-  - build
+  - retrieve
+  - compile
+  - dist
+  - test
 
 
-build-job:
-  stage: build
+retrieve-job:
+  stage: retrieve
   script:
-    - ant all
+    - ant retrieve
+
+
+compile-job:
+  stage: compile
+  script:
+    - ant compile
+
+dist-job:
+  stage: dist
+  script:
+    - ant dist
   artifacts:
     paths:
       - /home/dosi/builds/8sy1vFyDz/0/dosi/pic/dakhouch_hicham/tp_ci_cd/dist/Tetris.jar
     expire_in: 1 week
+
+test-job:
+  stage: test
+  script:
+    - ant test
