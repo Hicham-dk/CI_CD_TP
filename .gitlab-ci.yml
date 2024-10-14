@@ -22,5 +22,5 @@ dist-job:
     - ant dist
   artifacts:
     paths:
-      - /home/dosi/builds/8sy1vFyDz/0/dosi/pic/dakhouch_hicham/tp_ci_cd/dist/Tetris.jar
+      - /home/dosi/builds/8sy1vFyDz/0/dosi/pic/dakhouch_hicham/tp_ci_cd/dist
     expire_in: 1 week
