@@ -2,6 +2,7 @@ stages:
   - retrieve
   - compile
   - dist
+  - test
 
 
 retrieve-job:
@@ -10,10 +11,23 @@ retrieve-job:
     - ant retrieve
 
 
+
 compile-job:
   stage: compile
   script:
     - ant compile
+  artifacts:
+    paths:
+      - /home/dosi/builds/8sy1vFyDz/0/dosi/pic/dakhouch_hicham/tp_ci_cd/bin
+      - /home/dosi/Downloads/TetrisAnt/dist/builds/8sy1vFyDz/0/dosi/pic/dakhouch_hicham/tp_ci_cd/bin
+      - /home/dosi/Downloads/TetrisAnt/bin
+    expire_in: 1 week
+
+
+test-job:
+  stage: retrieve
+  script:
+    - ant test
  
 
 dist-job:
@@ -23,4 +37,7 @@ dist-job:
   artifacts:
     paths:
       - /home/dosi/builds/8sy1vFyDz/0/dosi/pic/dakhouch_hicham/tp_ci_cd/dist
+      - /home/dosi/Downloads/TetrisAnt/dist/builds/8sy1vFyDz/0/dosi/pic/dakhouch_hicham/tp_ci_cd/dist
+      - /home/dosi/Downloads/TetrisAnt/dist
     expire_in: 1 week
+
