@@ -12,7 +12,7 @@ compile-job:
     - ant dist
   artifacts:
     paths:
-      - dist/Tetris.jar
+      - /home/dosi/builds/8sy1vFyDz/0/dosi/pic/dakhouch_hicham/tp_ci_cd/dist/Tetris.jar
     expire_in: 1 week
 
 # Job pour exécuter les tests unitaires et générer un rapport JUnit
@@ -20,32 +20,19 @@ test-job:
   stage: test
   script:
     - ant test
-  artifacts:
-    when: always
-    paths:
-      - bin/test-results
-    reports:
-      junit: bin/test-results/TEST-*.xml
-    expire_in: 1 week
-  allow_failure: false # Le pipeline échoue si les tests échouent
+
 
 # Job pour générer les rapports de tests à partir des résultats JUnit
 test-reports-job:
   stage: test-reports
   script:
     - ant test-reports
-  artifacts:
-    paths:
-      - test-reports
-    expire_in: 1 week
+
 
 # Job pour générer la documentation Javadoc
 javadoc-job:
   stage: javadoc
   script:
     - ant javadoc
-  artifacts:
-    paths:
-      - javadoc
-    expire_in: 1 week
+
 
