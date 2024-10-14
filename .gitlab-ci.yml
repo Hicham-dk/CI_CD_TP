@@ -1,31 +1,25 @@
 stages:
-  - retrieve
-  - compile
   - dist
-  - test
+  - test-reports
+  - javadoc
 
-
-retrieve-job:
-  stage: retrieve
-  script:
-    - ant retrieve
-
-
-compile-job:
-  stage: compile
-  script:
-    - ant compile
 
 dist-job:
   stage: dist
   script:
     - ant dist
+
+
+test-reports-job:
+  stage: test-reports
+  script:
+    - ant test-reports
+
+javadoc-job:
+  stage: javadoc
+  script:
+    - ant javadoc
   artifacts:
     paths:
       - /home/dosi/builds/8sy1vFyDz/0/dosi/pic/dakhouch_hicham/tp_ci_cd/dist/Tetris.jar
     expire_in: 1 week
-
-test-job:
-  stage: test
-  script:
-    - ant test
