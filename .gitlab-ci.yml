@@ -1,15 +1,9 @@
 stages:
   - build
-  - test
+
 
 build-job:
   stage: build
   script:
-    - ant retrieve
-    - ant compile
-    - ant dist
+    - ant all
 
-test-job:
-  stage: test
-  script:
-    - ant test
