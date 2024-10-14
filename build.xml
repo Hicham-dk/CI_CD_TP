@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Compilation de Tetris" default="compile" xmlns:ivy="antlib:org.apache.ivy.ant" basedir=".">
+
+	<!-- Définition des propriétés -->
+	<property name="src.dir" location="src" />
+	<property name="obj.dir" location="bin" />
+	<property name="libs.dir" location="lib" />
+	<property name="main-class" value="fr.ubo.tetris.Tetris" />
+	<property name="compile.classpath" value="${libs.dir}/commons-lang3-3.5.jar" />
+	<property name="version" value="1.0" />
+	<property name="user.name" value="HDK" />
+	<property name="test.dir" location="test" />
+	<property name="test.bin.dir" location="bin/test" />
+	<property name="test.results.dir" location="bin/test-results" />
+	<property name="test.reports.dir" location="test-reports" />
+	<property name="doc.dir" location="javadoc" />
+
+
+
+	<target name="all" depends="dist, test-reports, javadoc">
+		<echo message="Création du JAR, des rapports de tests et de la documentation complètes." />
+	</target>
+
+
+
+	<target name="javadoc">
+		<echo message="Suppression de l'ancienne documentation..." />
+		<delete dir="${doc.dir}" />
+		<mkdir dir="${doc.dir}" />
+
+		<!-- Générer la documentation -->
+		<javadoc destdir="${doc.dir}" sourcepath="${src.dir}" />
+	</target>
+
+
+	<target name="test-reports" depends="test">
+		<mkdir dir="${test.reports.dir}" />
+		<junitreport>
+			<fileset dir="${test.results.dir}">
+				<include name="TEST-*.xml" />
+			</fileset>
+			<report todir="${test.reports.dir}" />
+		</junitreport>
+	</target>
+
+
+
+
+	<target name="test" depends="compile-test">
+		<mkdir dir="${test.results.dir}" />
+		<junit printsummary="on" haltonfailure="yes" fork="yes">
+			<classpath>
+				<path location="${obj.dir}" />
+				<path location="${obj.dir}/test" />
+				<fileset dir="${libs.dir}">
+					<include name="commons-lang3-3.5.jar" />
+					<include name="junit-4.13.2.jar" />
+					<include name="hamcrest-core-1.3.jar" />
+				</fileset>
+			</classpath>
+
+			<!-- TestCase classes -->
+			<batchtest>
+				<fileset dir="${test.dir}">
+					<include name="**/*Test*.java" />
+				</fileset>
+			</batchtest>
+
+			<!-- Output test results into files -->
+			<formatter type="plain" usefile="true" />
+			<formatter type="xml" usefile="true" />
+
+			<!-- Redirect the output files to the test-results directory -->
+			<jvmarg value="-Djava.io.tmpdir=${test.results.dir}" />
+		</junit>
+	</target>
+
+
+
+
+
+
+
+
+	<target name="compile-test" depends="compile">
+		<mkdir dir="${test.bin.dir}" />
+		<javac srcdir="${test.dir}" destdir="${test.bin.dir}" classpathref="ivy.classpath" />
+	</target>
+
+	<!-- Define the path to the Ivy JAR -->
+	<path id="ivy.path">
+		<pathelement location="/home/dosi/Downloads/apache-ivy-2.5.2-bin-with-deps/apache-ivy-2.5.2/ivy-2.5.2.jar" />
+	</path>
+
+	<!-- Declare the Ivy tasks for Ant -->
+	<taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.path" />
+
+
+	<target name="retrieve">
+		<ivy:settings />
+		<ivy:resolve />
+		<ivy:retrieve sync="true" type="jar" />
+	</target>
+
+	<target name="compile" depends="retrieve">
+		<ivy:retrieve />
+		<mkdir dir="${obj.dir}" />
+		<javac srcdir="${src.dir}" destdir="${obj.dir}" classpath="${compile.classpath}" source="17" target="17" classpathref="ivy.classpath" />
+
+	</target>
+
+	<path id="ivy.classpath">
+		<fileset dir="${libs.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<target name="clean">
+		<echo message="Suppression des fichiers issus de la compilation" />
+		<!--<delete dir="bin" />
+		<delete dir="lib" />
+		<mkdir dir="lib" /> -->
+		<delete dir="${obj.dir}" />
+		<delete dir="${libs.dir}" />
+		<mkdir dir="${libs.dir}" />
+	</target>
+
+	<target name="dist" depends="clean,compile">
+		<mkdir dir="dist" />
+		<jar destfile="dist/Tetris.jar" basedir="${obj.dir}">
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Implementation-Version" value="${version}" />
+				<attribute name="Main-Class" value="${main-class}" />
+				<attribute name="Class-Path" value="${libs.dir}/commons-lang3-3.5.jar" />
+			</manifest>
+		</jar>
+	</target>
+</project>
