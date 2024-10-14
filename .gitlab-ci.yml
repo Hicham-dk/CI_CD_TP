@@ -1,43 +1,101 @@
+# Définition des stages pour le pipeline
 stages:
+  - clean
   - retrieve
   - compile
-  - dist
+  - compile-test
   - test
+  - test-reports
+  - javadoc
+  - dist
 
+# Job pour nettoyer le projet avant la compilation
+clean-job:
+  stage: clean
+  script:
+    - ant clean
 
+# Job pour télécharger les dépendances avec Ivy
 retrieve-job:
   stage: retrieve
   script:
     - ant retrieve
+  needs:
+    - clean-job
 
-
-
+# Job pour compiler les sources principales du projet
 compile-job:
   stage: compile
   script:
     - ant compile
+  needs:
+    - retrieve-job
   artifacts:
     paths:
-      - /home/dosi/builds/8sy1vFyDz/0/dosi/pic/dakhouch_hicham/tp_ci_cd/bin
-      - /home/dosi/Downloads/TetrisAnt/dist/builds/8sy1vFyDz/0/dosi/pic/dakhouch_hicham/tp_ci_cd/bin
-      - /home/dosi/Downloads/TetrisAnt/bin
+      - bin/
     expire_in: 1 week
 
+# Job pour compiler les tests unitaires
+compile-test-job:
+  stage: compile-test
+  script:
+    - ant compile-test
+  needs:
+    - compile-job
+  artifacts:
+    paths:
+      - bin/test/
+    expire_in: 1 week
 
+# Job pour exécuter les tests unitaires
 test-job:
-  stage: retrieve
+  stage: test
   script:
     - ant test
- 
+  needs:
+    - compile-test-job
+  artifacts:
+    when: always
+    paths:
+      - bin/test-results/
+    reports:
+      junit: bin/test-results/TEST-*.xml
+    expire_in: 1 week
+  allow_failure: false
 
+# Job pour générer les rapports de tests à partir des résultats JUnit
+test-reports-job:
+  stage: test-reports
+  script:
+    - ant test-reports
+  needs:
+    - test-job
+  artifacts:
+    paths:
+      - test-reports/
+    expire_in: 1 week
+
+# Job pour générer la documentation Javadoc
+javadoc-job:
+  stage: javadoc
+  script:
+    - ant javadoc
+  needs:
+    - compile-job
+  artifacts:
+    paths:
+      - javadoc/
+    expire_in: 1 week
+
+# Job pour créer le JAR final après compilation, tests et documentation
 dist-job:
   stage: dist
   script:
     - ant dist
+  needs:
+    - test-reports-job
+    - javadoc-job
   artifacts:
     paths:
-      - /home/dosi/builds/8sy1vFyDz/0/dosi/pic/dakhouch_hicham/tp_ci_cd/dist
-      - /home/dosi/Downloads/TetrisAnt/dist/builds/8sy1vFyDz/0/dosi/pic/dakhouch_hicham/tp_ci_cd/dist
-      - /home/dosi/Downloads/TetrisAnt/dist
+      - dist/Tetris.jar
     expire_in: 1 week
-
