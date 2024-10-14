@@ -5,7 +5,9 @@ stages:
 build-job:
   stage: build
   script:
-    - ant clean compile
+    - ant retrieve
+    - ant compile
+    - ant dist
 
 test-job:
   stage: test
