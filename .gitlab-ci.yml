@@ -1,100 +1,44 @@
+# GitLab CI/CD pipeline configuration
+
 stages:
-  - tag
-  - clean
-  - retrieve
-  - compile
-  - compile-test
-  - javadoc
-  - dist
+  - build
   - test
+  - package
 
-
-tag-job:
-  stage: tag
+# Define the Docker build job
+build-job:
+  stage: build
   tags:
     - slave
   script:
-    - echo "Running on the slave runner"
+    # Build the Docker image
+    - docker build -t tetris-build .
+    # Verify the build
+    - docker images tetris-build
 
-
-
-
-clean-job:
-  stage: clean
+# Run tests inside the Docker container
+test-job:
+  stage: test
   tags:
     - slave
   script:
-    - ant clean
+    # Run the container and execute Ant commands for testing
+    - docker run --rm tetris-build ant compile-test
   needs:
-    - tag-job
+    - build-job
 
-
-
-retrieve-job:
-  stage: retrieve
+# Package the application (JAR file)
+package-job:
+  stage: package
   tags:
     - slave
   script:
-    - ant retrieve
+    # Run the container and execute the dist target
+    - docker run --rm -v $(pwd)/dist:/app/dist tetris-build ant dist
   needs:
-    - clean-job
-
-
-
-
-compile-job:
-  stage: compile
-  tags:
-    - slave
-  script:
-    - ant compile
-  needs:
-    - retrieve-job
-  artifacts:
-    paths:
-      - bin/
-    expire_in: 1 week
-
-# Job pour compiler les tests unitaires
-compile-test-job:
-  stage: compile-test
-  tags:
-    - slave
-  script:
-    - ant compile-test
-  needs:
-    - compile-job
-  artifacts:
-    paths:
-      - bin/test/
-    expire_in: 1 week
-
-
-
-
-
-javadoc-job:
-  stage: javadoc
-  tags:
-    - slave
-  script:
-    - ant javadoc
-  needs:
-    - compile-job
-  artifacts:
-    paths:
-      - javadoc/
-    expire_in: 1 week
-
-dist-job:
-  stage: dist
-  tags:
-    - slave
-  script:
-    - ant dist
-  needs:
-    - javadoc-job
+    - test-job
   artifacts:
     paths:
       - dist/Tetris.jar
     expire_in: 1 week
+
