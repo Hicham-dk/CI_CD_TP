@@ -9,7 +9,7 @@ stages:
 build-job:
   stage: build
   tags:
-    - slave
+    - slave_docker
   script:
     # Build the Docker image
     - docker build -t tetris-build .
@@ -20,7 +20,7 @@ build-job:
 test-job:
   stage: test
   tags:
-    - slave
+    - slave_docker
   script:
     # Run the container and execute Ant commands for testing
     - docker run --rm tetris-build ant compile-test
@@ -31,7 +31,7 @@ test-job:
 package-job:
   stage: package
   tags:
-    - slave
+    - slave_docker
   script:
     # Run the container and execute the dist target
     - docker run --rm -v $(pwd)/dist:/app/dist tetris-build ant dist
