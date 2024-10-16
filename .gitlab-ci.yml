@@ -1,4 +1,5 @@
 stages:
+  - tag
   - clean
   - retrieve
   - compile
@@ -7,20 +8,44 @@ stages:
   - dist
   - test
 
+
+tag-job:
+  stage: tag
+  tags:
+    - slave
+  script:
+    - echo "Running on the slave runner"
+
+
+
+
 clean-job:
   stage: clean
+  tags:
+    - slave
   script:
     - ant clean
+  needs:
+    - tag-job
+
+
 
 retrieve-job:
   stage: retrieve
+  tags:
+    - slave
   script:
     - ant retrieve
   needs:
     - clean-job
 
+
+
+
 compile-job:
   stage: compile
+  tags:
+    - slave
   script:
     - ant compile
   needs:
@@ -33,6 +58,8 @@ compile-job:
 # Job pour compiler les tests unitaires
 compile-test-job:
   stage: compile-test
+  tags:
+    - slave
   script:
     - ant compile-test
   needs:
@@ -48,6 +75,8 @@ compile-test-job:
 
 javadoc-job:
   stage: javadoc
+  tags:
+    - slave
   script:
     - ant javadoc
   needs:
@@ -59,6 +88,8 @@ javadoc-job:
 
 dist-job:
   stage: dist
+  tags:
+    - slave
   script:
     - ant dist
   needs:
@@ -67,6 +98,3 @@ dist-job:
     paths:
       - dist/Tetris.jar
     expire_in: 1 week
-
-
- 
