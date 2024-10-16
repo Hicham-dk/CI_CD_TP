@@ -1,45 +1,23 @@
-# Use the official Ubuntu as a base image
-FROM ubuntu:22.04
+FROM openjdk:17-jdk-buster
 
-# Set environment variables
-ENV DEBIAN_FRONTEND=noninteractive
+ENV IVY_VERSION=2.5.2
+ENV IVY_HOME=/usr/local/ivy
+ENV IVY_JAR_PATH=$IVY_HOME/ivy-${IVY_VERSION}.jar
 
-# Install required packages (Java, Ant, Ivy, and other utilities)
-RUN apt-get update && apt-get install -y \
-    openjdk-17-jdk \
-    ant \
-    wget \
-    unzip \
-    ivy \
-    && apt-get clean
+RUN apt-get update && \
+    apt-get install -y ant curl && \
+    apt-get clean
 
-# Set JAVA_HOME for Java 17
-ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
-ENV PATH=$JAVA_HOME/bin:$PATH
+RUN mkdir -p $IVY_HOME && \
+    curl -L https://dlcdn.apache.org/ant/ivy/${IVY_VERSION}/apache-ivy-${IVY_VERSION}-bin.tar.gz | tar xz -C $IVY_HOME --strip-components=1 && \
+    mv $IVY_HOME/ivy-${IVY_VERSION}.jar $IVY_HOME/ivy.jar
 
-# Install Apache Ivy manually (if not already in the package manager)
-#RUN wget https://downloads.apache.org/ant/ivy/2.5.2/apache-ivy-2.5.2-bin-with-deps.zip && \
-#    unzip apache-ivy-2.5.2-bin-with-deps.zip && \
- #   mv apache-ivy-2.5.2 /opt/ivy && \
-  #  ln -s /opt/ivy/ivy-2.5.2.jar /usr/share/ant/lib/ivy.jar && \
-   # rm apache-ivy-2.5.2-bin-with-deps.zip
+ENV CLASSPATH=$CLASSPATH:$IVY_HOME/ivy.jar
 
-# Create working directory
 WORKDIR /app
 
-# Copy the source code, build.xml, and ivy.xml to the container
-COPY ..
+COPY . /app
 
-# Ensure the Ivy configuration is available
-RUN mkdir -p /root/.ivy2 && cp ivy.xml /root/.ivy2/ivy.xml
+RUN ant 
 
-# Retrieve dependencies via Ivy
-R
-RUN ant retrieve
-RUN ant compile
-RUN ant compile-test 
-RUN ant javadoc
-RUN ant dist
-#mv dist/Tetris.jar dist/Tetris-$(date +'%Y%m%d').jar
-
-
+CMD ["sh", "-c", "ls -l /app && cd bin && ls"]
