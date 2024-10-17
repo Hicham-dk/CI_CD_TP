@@ -1,48 +1,24 @@
 pipeline {
-    agent any
-
-    environment {
-        DOCKER_IMAGE = 'tetrisant_image:latest'
-    }
-
+    agent any  // This will run the job on any available agent
     stages {
-        stage('Checkout Code') {
+        stage('Checkout') {
             steps {
-                echo 'Checking out code...'
-                checkout scm // This checks out your repository code
+                checkout scm
             }
         }
-
-        stage('Set up Docker Buildx') {
+        stage('Build') {
             steps {
-                echo 'Setting up Docker Buildx...'
-                // This is assumed, if you need custom Docker Buildx setup, you can add more steps
-            }
-        }
-
-        stage('Build Docker Image') {
-            steps {
-                echo "Building Docker image: ${DOCKER_IMAGE}..."
-                sh '''
+                script {
                     echo "Checking files in current directory:"
-                    ls -l
-                    docker build -t ${DOCKER_IMAGE} .
-                '''
+                    sh 'ls -l'
+                    sh 'docker build -t tetrisant_image:latest .'
+                }
             }
         }
-
-        stage('Upload Tetris.jar') {
+        stage('Upload Artifact') {
             steps {
-                echo 'Uploading Tetris.jar...'
-                archiveArtifacts artifacts: 'dist/Tetris.jar', allowEmptyArchive: true
+                archiveArtifacts artifacts: 'dist/Tetris.jar'
             }
-        }
-    }
-    
-    post {
-        always {
-            echo 'Cleaning up...'
-            cleanWs() // Clean up the workspace after the build
         }
     }
 }
