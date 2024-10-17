@@ -11,7 +11,7 @@ pipeline {
                 script {
                     echo "Checking files in current directory:"
                     sh 'ls -l'
-                    sh 'docker build -t tetrisant_image:latest .'
+                    sh 'sudo docker build -t tetrisant_image:latest .'
                 }
             }
         }
