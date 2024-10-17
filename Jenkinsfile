@@ -1,7 +1,5 @@
 pipeline {
-    agent {
-        label 'ubuntu' // Use an Ubuntu agent or Jenkins node with Docker installed
-    }
+    agent any
 
     environment {
         DOCKER_IMAGE = 'tetrisant_image:latest'
