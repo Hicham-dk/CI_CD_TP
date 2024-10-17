@@ -5,8 +5,12 @@ ENV IVY_HOME=/usr/local/ivy
 ENV IVY_JAR_PATH=$IVY_HOME/ivy-${IVY_VERSION}.jar
 
 RUN apt-get update && \
-    apt-get install -y ant curl && \
+    apt-get install -y --no-install-recommends ant curl || { \
+        echo "Retrying apt-get update..." && sleep 5 && \
+        apt-get update && apt-get install -y --no-install-recommends ant curl; \
+    } && \
     apt-get clean
+
 
 RUN mkdir -p $IVY_HOME && \
     curl -L https://dlcdn.apache.org/ant/ivy/${IVY_VERSION}/apache-ivy-${IVY_VERSION}-bin.tar.gz | tar xz -C $IVY_HOME --strip-components=1 && \
