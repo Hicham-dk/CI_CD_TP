@@ -1,37 +1,24 @@
 pipeline {
-    agent any
-    environment {
-        DOCKER_USERNAME = 'Hicham-dk'
-        DOCKER_PASSWORD = 'Mouloudiamco123'
-        IMAGE_NAME = "${DOCKER_USERNAME}/tetrisant:${env.GIT_COMMIT}"
-    }
+    agent any  // This will run the job on any available agent
     stages {
-        stage('Build Image') {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+        stage('Build') {
             steps {
                 script {
-                    echo "Building Docker image..."
-                    sh "docker build -t ${IMAGE_NAME} ."
+                    echo "Checking files in current directory:"
+                    sh 'ls -l'
+                    sh 'docker build -t tetrisant_image:latest .'
                 }
             }
         }
-        stage('Push Image') {
-            when {
-                branch 'main'
-            }
+        stage('Upload Artifact') {
             steps {
-                script {
-                    echo "Logging into DockerHub..."
-                    sh "echo ${DOCKER_PASSWORD} | docker login -u ${DOCKER_USERNAME} --password-stdin"
-                    echo "Pushing the image to DockerHub..."
-                    sh "docker push ${IMAGE_NAME}"
-                }
+                archiveArtifacts artifacts: 'dist/Tetris.jar'
             }
-        }
-    }
-    post {
-        always {
-            echo 'Cleaning up...'
-            sh "docker rmi ${IMAGE_NAME} || true"
         }
     }
 }
